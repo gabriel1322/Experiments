@@ -9,14 +9,14 @@
 
 <p>
   This repository contains the code and resources for a research project focused on exploring trade-offs between <strong>fairness</strong>,
-  <strong>privacy</strong> <strong>robustness</strong> and accuracy in machine learning models through Federated Learning. The experiments were conducted using Python and TensorFlow, leveraging specialized TensorFlow libraries like TensorFlow Privacy and TensorFlow Federated.
+  <strong>privacy</strong>, <strong>robustness</strong> and accuracy in machine learning models through Federated Learning. The experiments were conducted using Python and TensorFlow, leveraging specialized TensorFlow libraries like TensorFlow Privacy and TensorFlow Federated.
 </p>
 
 <h2>Table of Contents</h2>
 
 <ul>
   <li><a href="#description">Description</a></li>
-  <li><a href="#installation">Installation</a></li>
+  <li><a href="prerequisites">Prerequisites</a></li>
   <li><a href="#usage">Usage</a></li>
   <li><a href="#experiments">Experiments</a></li>
   <li><a href="#contributing">Contributing</a></li>
@@ -50,25 +50,19 @@ pip install tensorflow_federated
 
 <h2>Usage</h2>
 
-<p>
-  After installing the dependencies, clone this repository and navigate to the root directory to run the experiments.
-</p>
 
-<pre>
-  <code>
-git clone https://github.com/your-github-username/your-repo-name.git
-cd your-repo-name
-python your_experiment_file.py
-  </code>
-</pre>
+```bash
+python train_mnist.py --NUM_CLIENTS [NUM_CLIENTS] --BATCH_SIZE [BATCH_SIZE] --EPOCHS [EPOCHS] --f_param [f_param] --r_param [r_param] --l2_norm_clip [l2_norm_clip] --noise_multiplier [noise_multiplier] --number_versions [number_versions] --noise_scale [noise_scale] --num_microbatches [num_microbatches] --learning_rate [learning_rate]
+``` 
+
 
 <h2>Experiments</h2>
 
 <h3>Fairness</h3>
 
 <p>
-  We measure fairness through demographic parity, ensuring that prediction rates are similar across different classes.
-  We used regularization parameters to achieve this and measured the variance in predictions.
+  We measure fairness through demographic parity, ensuring that prediction rates are similar across the different classes.
+  We use a regularization term to achieve this and measure the variance on the mean of predictions for each class.
 </p>
 
 <h3>Privacy</h3>
@@ -88,7 +82,7 @@ python your_experiment_file.py
 <h3>Federated Learning</h3>
 
 <p>
-  Experiments are conducted on pre-processed datasets like EMNIST and CIFAR-10 with a federated learning setup
+  Experiments are conducted on the pre-processed datasets EMNIST and CIFAR-100 with a federated learning setup
   involving 100 clients.
 </p>
 

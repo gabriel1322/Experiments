@@ -58,18 +58,18 @@ python train_mnist.py --NUM_CLIENTS [NUM_CLIENTS] --BATCH_SIZE [BATCH_SIZE] --EP
 
 <h2>Experiments</h2>
 
+<h3>Federated Learning</h3>
+
+<p>
+  Experiments are conducted on the pre-processed datasets EMNIST and CIFAR-100 with a federated learning setup
+  involving 100 clients.
+</p>
+
 <h3>Fairness</h3>
 
 <p>
   We measure fairness through demographic parity, ensuring that prediction rates are similar across the different classes.
   We use a regularization term to achieve this and measure the variance on the mean of predictions for each class.
-</p>
-
-<h3>Privacy</h3>
-
-<p>
-  Privacy is maintained by regularizing the model to ensure it doesn't become too tailored to specific data points.
-  We use the <strong>DpAdamGaussianOptimizer</strong> and measure privacy leakage using epsilon.
 </p>
 
 <h3>Robustness</h3>
@@ -79,11 +79,11 @@ python train_mnist.py --NUM_CLIENTS [NUM_CLIENTS] --BATCH_SIZE [BATCH_SIZE] --EP
   robustness by comparing the accuracy on clean and noisy test data.
 </p>
 
-<h3>Federated Learning</h3>
+<h3>Privacy</h3>
 
 <p>
-  Experiments are conducted on the pre-processed datasets EMNIST and CIFAR-100 with a federated learning setup
-  involving 100 clients.
+  Privacy is maintained by regularizing the model to ensure it doesn't become too tailored to specific data points.
+  We use the <strong>DpAdamGaussianOptimizer</strong> and measure privacy leakage using epsilon.
 </p>
 
 <h2>Contributing</h2>

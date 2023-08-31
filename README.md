@@ -95,7 +95,7 @@ python train_mnist.py --NUM_CLIENTS [NUM_CLIENTS] --BATCH_SIZE [BATCH_SIZE] --EP
 <h2>License</h2>
 
 <p>
-  This project is licensed under the MIT License. See the <a href="LICENSE.md">LICENSE.md</a> file for details.
+  This project is licensed under the MIT License. See the <a href="LICENSE">LICENSE</a> file for details.
 </p>
 
 </body>

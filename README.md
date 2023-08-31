@@ -16,7 +16,7 @@
 
 <ul>
   <li><a href="#description">Description</a></li>
-  <li><a href="prerequisites">Prerequisites</a></li>
+  <li><a href="#prerequisites">Prerequisites</a></li>
   <li><a href="#usage">Usage</a></li>
   <li><a href="#experiments">Experiments</a></li>
   <li><a href="#contributing">Contributing</a></li>

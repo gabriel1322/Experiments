@@ -3,13 +3,13 @@
 
 <body>
 
-<h1>Machine Learning Experiments on Fairness, Privacy, and Robustness</h1>
+<h1>FRAP: Capturing the Fairness/Robustness/Accuracy/Privacy Trade-Off in Machine Learning</h1>
 
 <h2>Description</h2>
 
 <p>
-  This repository contains the code and resources for a research project focused on exploring trade-offs between <strong>fairness</strong>,
-  <strong>privacy</strong>, <strong>robustness</strong> and accuracy in machine learning models through Federated Learning. The experiments were conducted using Python and TensorFlow, leveraging specialized TensorFlow libraries like TensorFlow Privacy and TensorFlow Federated.
+  This repository contains the code and resources for a research project focused on exploring the trade-off between <strong>fairness</strong>,
+  <strong>robustness</strong>, <strong>accuracy</strong> and <strong>privacy</strong> in machine learning models through Federated Learning. The experiments were conducted using Python and TensorFlow, leveraging specialized TensorFlow libraries like TensorFlow Privacy and TensorFlow Federated.
 </p>
 
 <h2>Table of Contents</h2>

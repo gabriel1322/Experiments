@@ -29,9 +29,9 @@
 Before you can run this project, make sure you have the following dependencies installed:
 
 - Python 3.6+ 
-- TensorFlow 2.0+ (`pip install tensorflow`)
-- TensorFlow Privacy (`pip install tensorflow_privacy`)
-- TensorFlow Federated (`pip install tensorflow_federated`)
+- TensorFlow 2.0+ 
+- TensorFlow Privacy 
+- TensorFlow Federated 
 
 **Important Note:** TensorFlow Federated supports the following operating systems: Linux and macOS. Please ensure you're running this project on a compatible operating system.
 

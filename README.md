@@ -3,7 +3,7 @@
 
 <body>
 
-<h1>FRAP: Capturing the Fairness/Robustness/Accuracy/Privacy Trade-Off in Machine Learning</h1>
+<h1>FRAP: Capturing the Fairness/Robustness/Accuracy/Privacy Trade-Off in Machine Learning models</h1>
 
 <h2>Description</h2>
 

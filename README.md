@@ -26,36 +26,31 @@
 <h2>Prerequisites</h2>
 
 <p>     
-Before you can run this project, make sure you have the following dependencies installed:
+Before you can run this project, make sure you have met the following requirement:
 
-- Python 3.6+ 
-- TensorFlow 2.0+ 
-- TensorFlow Privacy 
-- TensorFlow Federated 
+- Python 3.6+ (Tested on Python 3.10.12)
 
 **Important Note:** TensorFlow Federated supports the following operating systems: Linux and macOS. Please ensure you're running this project on a compatible operating system.
 
-### Installing Dependencies
+### Installing Required Packages
 
-```bash
-pip install tensorflow
-```
-```bash
-pip install tensorflow_privacy
-```
-```bash
-pip install tensorflow_federated
-```
+To install the packages necessary for this project, you can use the `requirements.txt` file. Here's how:
+
+1. Clone this repository to your local machine.
+2. Navigate to the project directory using the terminal.
+3. If you're using a virtual environment, activate it (recommended).
+4. Run the following command to install the required packages:
+   
+   ```bash
+   pip install -r requirements.txt
+   
 </p>
 
 <h2>Usage</h2>
 
-
 ```bash
 python train_mnist.py --NUM_CLIENTS [NUM_CLIENTS] --BATCH_SIZE [BATCH_SIZE] --EPOCHS [EPOCHS] --f_param [f_param] --r_param [r_param] --l2_norm_clip [l2_norm_clip] --noise_multiplier [noise_multiplier] --number_versions [number_versions] --noise_scale [noise_scale] --num_microbatches [num_microbatches] --learning_rate [learning_rate]
 ``` 
-
-
 <h2>Experiments</h2>
 
 <h3>Federated Learning</h3>

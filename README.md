@@ -38,7 +38,7 @@ To install the packages necessary for this project, you can use the `requirement
 
 1. Clone this repository to your local machine.
 2. Navigate to the project directory using the terminal.
-3. If you're using a virtual environment, activate it (recommended).
+3. If you're using a virtual environment, activate it.
 4. Run the following command to install the required packages:
    
    ```bash

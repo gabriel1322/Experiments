@@ -28,11 +28,13 @@
 <p>     
 Before you can run this project, make sure you have met the following requirement:
 
-- Python 3.6+ (Tested on Python 3.10.12)
+- Python 3.9+ (Tested on Python 3.10.12)
 
 **Important Note:** TensorFlow Federated supports the following operating systems: Linux and macOS. Please ensure you're running this project on a compatible operating system.
 
 ### Installing Required Packages
+
+<ins>**Method 1**</ins>
 
 To install the packages necessary for this project, you can use the `requirements.txt` file. Here's how:
 
@@ -43,14 +45,40 @@ To install the packages necessary for this project, you can use the `requirement
    
    ```bash
    pip install -r requirements.txt
+
+<ins>**Method 2**</ins>
+
+If you encounter any problems with the first method, you can simply install the following dependencies and see if any packages are missing when running the code.
+  ```bash
+pip install tensorflow
+```
+```bash
+pip install tensorflow_privacy
+```
+```bash
+pip install tensorflow_federated
+```
    
 </p>
 
 <h2>Usage</h2>
 
 ```bash
-python train_mnist.py --NUM_CLIENTS [NUM_CLIENTS] --BATCH_SIZE [BATCH_SIZE] --EPOCHS [EPOCHS] --f_param [f_param] --r_param [r_param] --l2_norm_clip [l2_norm_clip] --noise_multiplier [noise_multiplier] --number_versions [number_versions] --noise_scale [noise_scale] --num_microbatches [num_microbatches] --learning_rate [learning_rate]
-``` 
+python train_mnist.py --NUM_CLIENTS [NUM_CLIENTS] --BATCH_SIZE [BATCH_SIZE] --EPOCHS [EPOCHS] --fairness_parameter [fairness_parameter] --l2_norm_clip [l2_norm_clip] --noise_multiplier [noise_multiplier] --number_versions [number_versions] --noise_scale [noise_scale] --noise_test [noise_test] --learning_rate [learning_rate]
+```
+### Command-line Arguments
+<ul>
+    <li><b>NUM_CLIENTS:</b> The number of clients participating in the federated learning setup.</li>
+    <li><b>BATCH_SIZE:</b> The batch size used for training and evaluation.</li>
+    <li><b>EPOCHS:</b> The number of training epochs. The local model weights are aggregated to the server once per epoch.</li>
+    <li><b>fairness_parameter:</b> A parameter used for controlling the fairness regularization of the model. The bigger it is, the fairer the model.</li>
+    <li><b>l2_norm_clip:</b> The L2 norm gradient clipping parameter for differential privacy.</li>
+    <li><b>noise_multiplier:</b> The gradient noise multiplier parameter for differential privacy.</li>
+    <li><b>number_versions:</b> The number of versions used for each sample, as part of the randomized smoothing.</li>
+    <li><b>noise_scale:</b> The scale of noise applied to versions in randomized smoothing.</li>
+    <li><b>noise_test:</b> A parameter used for controlling the noise added to the test dataset. Only used to test the robustness of the model.</li>
+    <li><b>learning_rate:</b> The learning rate for the training process.</li>
+</ul>
 <h2>Experiments</h2>
 
 <h3>Federated Learning</h3>

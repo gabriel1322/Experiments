@@ -12,16 +12,15 @@ tf.random.set_seed(1234)
 # Argument Parsing
 parser = argparse.ArgumentParser(description='Train a model with fairness, robustness, and differential privacy considerations.')
 
-parser.add_argument('--NUM_CLIENTS', type=int, default=100, help='Number of clients')
+parser.add_argument('--NUM_CLIENTS', type=int, default=10, help='Number of clients')
 parser.add_argument('--BATCH_SIZE', type=int, default=16, help='Batch size')
 parser.add_argument('--EPOCHS', type=int, default=10, help='Number of epochs')
-parser.add_argument('--f_param', type=float, default=10, help='Fairness parameter value (lambda used for regularization)')
-parser.add_argument('--r_param', type=float, default=0.2, help='Robustness parameter value (noise added to input data)')
+parser.add_argument('--fairness_parameter', type=float, default=0, help='Fairness parameter value (lambda used for regularization)')
 parser.add_argument('--l2_norm_clip', type=float, default=1e30, help='L2 norm clip for DP (gradient clipping)')
 parser.add_argument('--noise_multiplier', type=float, default=0, help='Noise multiplier for DP (gradient noise))')
 parser.add_argument('--number_versions', type=float, default=0, help='Number of versions for each sample (randomized smoothing)')
 parser.add_argument('--noise_scale', type=float, default=1, help='Noise scale (randomized smoothing)')
-parser.add_argument('--num_microbatches', type=int, default=1, help='Number of microbatches for DP')
+parser.add_argument('--noise_test', type=float, default=0.2, help='Robustness parameter value (noise added to input data)')
 parser.add_argument('--learning_rate', type=float, default=0.001, help='Learning rate for DP optimizer')
 args = parser.parse_args()
 
@@ -43,7 +42,7 @@ federated_train_data = [preprocess(emnist_train.create_tf_dataset_for_client(x))
 ]
 
 def transform_noisy(image, label):
-  image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=args.r_param, dtype=tf.float32) 
+  image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=args.noise_test, dtype=tf.float32) 
   return (image_noisy, label)
         
 # Add gaussian noise to a dataset of a client
@@ -78,7 +77,7 @@ def create_keras_model():
 def fairness_term(predictions):
   rates = tf.reduce_mean(predictions, axis=0)
   dp_loss = tf.math.reduce_variance(rates)
-  fairness = args.f_param * dp_loss
+  fairness = args.fairness_parameter * dp_loss
   return fairness
 
 # In order to use this model in TFF, wrap the Keras model as a tff.learning.models.VariableModel
@@ -142,7 +141,7 @@ def client_update_fn(tf_dataset, server_weights):
   client_optimizer = DPAdamGaussianOptimizer(
       l2_norm_clip=args.l2_norm_clip,
       noise_multiplier=args.noise_multiplier,
-      num_microbatches=args.num_microbatches,
+      num_microbatches=1,
       learning_rate=args.learning_rate)
   return client_update(model, tf_dataset, server_weights, client_optimizer)
 
@@ -180,7 +179,7 @@ if __name__ == "__main__":
     central_emnist_test = emnist_test.create_tf_dataset_from_all_clients()
     central_emnist_test = preprocess(central_emnist_test)
     
-    noisy_central_emnist_test = add_gaussian_noise(central_emnist_test)
+    #noisy_central_emnist_test = add_gaussian_noise(central_emnist_test)
     
     def evaluate(server_state):
         #keras_model = tf.keras.models.load_model('mnist-federated_model.h5')
@@ -190,12 +189,13 @@ if __name__ == "__main__":
             metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]  
         )
         keras_model.set_weights(server_state)
+        #keras_model.evaluate(noisy_central_emnist_test)
         keras_model.evaluate(central_emnist_test)
-        keras_model.evaluate(noisy_central_emnist_test)
-        keras_model.save('mnist-federated_model_test.h5')
+        keras_model.save('mnist-federated_model_test2.h5')
         #predictions = keras_model.predict(central_emnist_test)
         #predictions_mean = tf.math.reduce_mean(predictions, axis=0)
-        #tf.print('Variance (fairness metric): '+ tf.math.reduce_variance(predictions_mean))
+        #tf.print(predictions_mean)
+        #tf.print(tf.math.reduce_variance(predictions_mean))
 
     def transform_noisy1(image, label):
       image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.1*args.noise_scale, dtype=tf.float32) 
@@ -204,30 +204,30 @@ if __name__ == "__main__":
       return dataset.map(transform_noisy1)
     
     def transform_noisy2(image, label):
-      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.12*args.noise_scale, dtype=tf.float32) 
+      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.125*args.noise_scale, dtype=tf.float32) 
       return (image_noisy, label)
     def add_gaussian_noise2(dataset):
       return dataset.map(transform_noisy2)
     
     def transform_noisy3(image, label):
-      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.14*args.noise_scale, dtype=tf.float32) 
+      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.15*args.noise_scale, dtype=tf.float32) 
       return (image_noisy, label)
     def add_gaussian_noise3(dataset):
       return dataset.map(transform_noisy3)
 
     def transform_noisy4(image, label):
-      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.16*args.noise_scale, dtype=tf.float32) 
+      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.175*args.noise_scale, dtype=tf.float32) 
       return (image_noisy, label)
     def add_gaussian_noise4(dataset):
       return dataset.map(transform_noisy4)
     
     def transform_noisy5(image, label):
-      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.18*args.noise_scale, dtype=tf.float32) 
+      image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.2*args.noise_scale, dtype=tf.float32) 
       return (image_noisy, label)
     def add_gaussian_noise5(dataset):
       return dataset.map(transform_noisy5)
     
-    def randomized_smoothing_predict(dataset, num_samples, noise_scale, confidence_threshold):
+    def randomized_smoothing_predict(dataset, num_samples, confidence_threshold):
       #Unpack the labels and store them in a list
       labels = []
       for element in dataset:
@@ -250,7 +250,7 @@ if __name__ == "__main__":
       new_dataset = tf.data.Dataset.concatenate(new_dataset, dataset5)
      
       # Randomized smoothing evaluation on the new dataset
-      model = tf.keras.models.load_model('saved_model.h5')
+      model = tf.keras.models.load_model('mnist-federated_model.h5')
       sum = 0
       count = 0
       predictions = model.predict(new_dataset)
@@ -283,9 +283,11 @@ if __name__ == "__main__":
 
     for round in range(args.EPOCHS):
         server_state = federated_algorithm.next(server_state, federated_train_data)
+        if round % 10 ==0 :
+          evaluate(server_state)
 
-    evaluate(server_state)
-    #randomized_smoothing_predict(noisy_central_emnist_test, 5, 0.1, 0.6)
+    #evaluate(server_state)
+    #randomized_smoothing_predict(noisy_central_emnist_test, 5, 1)
 
     # Load the model with server weights
     #model = tf.keras.models.load_model('saved_model.h5')
@@ -300,15 +302,3 @@ if __name__ == "__main__":
     #plt.imshow(first_image.numpy().reshape(28, 28), cmap='gray')  # assuming the image is 28x28
     #plt.title(f"Actual Label: {first_label.numpy()[0]}")
     #plt.show()
-
-
-
-    
-    
-
-
-
-
-
-
-

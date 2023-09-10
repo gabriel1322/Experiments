@@ -6,8 +6,8 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
-random.seed(1234)
-tf.random.set_seed(1234)
+#random.seed(1234)
+#tf.random.set_seed(1234)
 
 # Argument Parsing
 parser = argparse.ArgumentParser(description='Train a model with fairness, robustness, and differential privacy considerations.')
@@ -75,9 +75,9 @@ def create_keras_model():
 
 # Define fairness term
 def fairness_term(predictions):
-  rates = tf.reduce_mean(predictions, axis=0)
-  dp_loss = tf.math.reduce_variance(rates)
-  fairness = args.fairness_parameter * dp_loss
+  mean_prediction_rates = tf.math.reduce_mean(predictions, axis=0)
+  variance = tf.math.reduce_variance(mean_prediction_rates)
+  fairness = args.fairness_parameter * variance
   return fairness
 
 # In order to use this model in TFF, wrap the Keras model as a tff.learning.models.VariableModel
@@ -98,10 +98,16 @@ def client_update(model, dataset, server_weights, client_optimizer):
   tf.nest.map_structure(lambda x, y: x.assign(y),
                         client_weights, server_weights)
 
+  #Client selection
   #print("Shuffling the dataset")
   #shuffled_dataset = dataset.shuffle(500)
   #selected_clients = shuffled_dataset.take(10)
   #print("End of shuffling")
+
+  #Printing the number of data samples per client
+  #count = dataset.reduce(0, lambda x, _: x + 1)
+  #tf.print(",", count)
+  
   # Use the client_optimizer to update the local model.
   for batch in dataset:
       # Compute a forward pass on the batch of data
@@ -197,10 +203,10 @@ if __name__ == "__main__":
         accuracy = keras_model.evaluate(central_emnist_test)[1]
         print(accuracy)
         keras_model.save('test.h5')
-        #predictions = keras_model.predict(central_emnist_test)
-        #predictions_mean = tf.math.reduce_mean(predictions, axis=0)
-        #tf.print(predictions_mean)
-        #tf.print(tf.math.reduce_variance(predictions_mean))
+        predictions = keras_model.predict(central_emnist_test)
+        predictions_mean = tf.math.reduce_mean(predictions, axis=0)
+        tf.print(predictions_mean)
+        tf.print(tf.math.reduce_variance(predictions_mean))
         return accuracy
 
     def transform_noisy1(image, label):
@@ -256,7 +262,7 @@ if __name__ == "__main__":
       new_dataset = tf.data.Dataset.concatenate(new_dataset, dataset5)
      
       # Randomized smoothing evaluation on the new dataset
-      model = tf.keras.models.load_model('mnist-federated_model.h5')
+      model = tf.keras.models.load_model('test.h5')
       sum = 0
       count = 0
       predictions = model.predict(new_dataset)
@@ -284,38 +290,40 @@ if __name__ == "__main__":
                   sum += 0
       accuracy = sum/40832 
       print('Accuracy: ', accuracy)
+      return accuracy
 
     server_state = federated_algorithm.initialize()
     #model = tf.keras.models.load_model('mnist-federated_model_test_CLIENTS_3383_10%_BATCH_16_EPOCHS_100.h5')
     #server_state = model.get_weights()
 
-    rounds = []
-    accuracy = []
+    #rounds = []
+    #accuracy = []
     for round in range(args.EPOCHS):
         server_state = federated_algorithm.next(server_state, federated_train_data)
-        if round % 50 == 0:
-          rounds.append(round + 1)
-          accuracy.append(evaluate(server_state))
-    #evaluate(server_state)
+        #if round % 50 == 0:
+          #rounds.append(round + 1)
+          #accuracy.append(evaluate(server_state))
+        evaluate(server_state)
     # Create a plot
-    plt.plot(rounds, accuracy, marker='o', linestyle='-')
+    #plt.plot(rounds, accuracy, marker='o', linestyle='-')
 
     # Add labels and title
-    plt.xlabel('Number of Epochs')
-    plt.ylabel('Accuracy')
-    plt.title('Accuracy vs. Number of Epochs')
+    #plt.xlabel('Number of Epochs')
+    #plt.ylabel('Accuracy')
+    #plt.title('Accuracy vs. Number of Epochs')
 
     # Save the plot to a file (e.g., as a PNG image)
-    plt.savefig('test.png')
+    #plt.savefig('test.png')
 
     # Show the plot
-    plt.grid(True)
-    plt.show()
+    #plt.grid(True)
+    #plt.show()
 
     #evaluate(server_state)
 
     #evaluate(server_state)
-    #randomized_smoothing_predict(noisy_central_emnist_test, 5, 1)
+    #randomized_smoothing_predict(noisy_central_emnist_test, 5, 0.6)
+    #print(randomized_smoothing_predict(central_emnist_test, 5, 0.6) - randomized_smoothing_predict(noisy_central_emnist_test, 5, 0.6))
 
     # Load the model with server weights
     #model = tf.keras.models.load_model('saved_model.h5')

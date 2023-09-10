@@ -98,6 +98,10 @@ def client_update(model, dataset, server_weights, client_optimizer):
   tf.nest.map_structure(lambda x, y: x.assign(y),
                         client_weights, server_weights)
 
+  #print("Shuffling the dataset")
+  #shuffled_dataset = dataset.shuffle(500)
+  #selected_clients = shuffled_dataset.take(10)
+  #print("End of shuffling")
   # Use the client_optimizer to update the local model.
   for batch in dataset:
       # Compute a forward pass on the batch of data
@@ -190,12 +194,14 @@ if __name__ == "__main__":
         )
         keras_model.set_weights(server_state)
         #keras_model.evaluate(noisy_central_emnist_test)
-        keras_model.evaluate(central_emnist_test)
-        keras_model.save('mnist-federated_model_test2.h5')
+        accuracy = keras_model.evaluate(central_emnist_test)[1]
+        print(accuracy)
+        keras_model.save('test.h5')
         #predictions = keras_model.predict(central_emnist_test)
         #predictions_mean = tf.math.reduce_mean(predictions, axis=0)
         #tf.print(predictions_mean)
         #tf.print(tf.math.reduce_variance(predictions_mean))
+        return accuracy
 
     def transform_noisy1(image, label):
       image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.1*args.noise_scale, dtype=tf.float32) 
@@ -280,11 +286,33 @@ if __name__ == "__main__":
       print('Accuracy: ', accuracy)
 
     server_state = federated_algorithm.initialize()
+    #model = tf.keras.models.load_model('mnist-federated_model_test_CLIENTS_3383_10%_BATCH_16_EPOCHS_100.h5')
+    #server_state = model.get_weights()
 
+    rounds = []
+    accuracy = []
     for round in range(args.EPOCHS):
         server_state = federated_algorithm.next(server_state, federated_train_data)
-        if round % 10 ==0 :
-          evaluate(server_state)
+        if round % 50 == 0:
+          rounds.append(round + 1)
+          accuracy.append(evaluate(server_state))
+    #evaluate(server_state)
+    # Create a plot
+    plt.plot(rounds, accuracy, marker='o', linestyle='-')
+
+    # Add labels and title
+    plt.xlabel('Number of Epochs')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy vs. Number of Epochs')
+
+    # Save the plot to a file (e.g., as a PNG image)
+    plt.savefig('test.png')
+
+    # Show the plot
+    plt.grid(True)
+    plt.show()
+
+    #evaluate(server_state)
 
     #evaluate(server_state)
     #randomized_smoothing_predict(noisy_central_emnist_test, 5, 1)

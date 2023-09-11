@@ -12,13 +12,13 @@ import numpy as np
 # Argument Parsing
 parser = argparse.ArgumentParser(description='Train a model with fairness, robustness, and differential privacy considerations.')
 
-parser.add_argument('--NUM_CLIENTS', type=int, default=10, help='Number of clients')
-parser.add_argument('--BATCH_SIZE', type=int, default=16, help='Batch size')
-parser.add_argument('--EPOCHS', type=int, default=10, help='Number of epochs')
+parser.add_argument('--NUM_CLIENTS', type=int, default=100, help='Number of clients')
+parser.add_argument('--BATCH_SIZE', type=int, default=1, help='Batch size')
+parser.add_argument('--EPOCHS', type=int, default=1, help='Number of epochs')
 parser.add_argument('--fairness_parameter', type=float, default=0, help='Fairness parameter value (lambda used for regularization)')
 parser.add_argument('--l2_norm_clip', type=float, default=1e30, help='L2 norm clip for DP (gradient clipping)')
 parser.add_argument('--noise_multiplier', type=float, default=0, help='Noise multiplier for DP (gradient noise))')
-parser.add_argument('--number_versions', type=float, default=0, help='Number of versions for each sample (randomized smoothing)')
+parser.add_argument('--number_versions', type=float, default=5, help='Number of versions for each sample (randomized smoothing)')
 parser.add_argument('--noise_scale', type=float, default=1, help='Noise scale (randomized smoothing)')
 parser.add_argument('--noise_test', type=float, default=0.2, help='Robustness parameter value (noise added to input data)')
 parser.add_argument('--learning_rate', type=float, default=0.001, help='Learning rate for DP optimizer')
@@ -66,7 +66,7 @@ def add_gaussian_noise(dataset):
 
 # Model creation : single hidden layer, followed by a softmax layer.
 def create_keras_model():
-  initializer = tf.keras.initializers.GlorotNormal(seed=0)
+  initializer = tf.keras.initializers.GlorotNormal() # put a seed in the parenthesis here to eliminate randomness
   return tf.keras.models.Sequential([
       tf.keras.layers.Input(shape=(784,)),
       tf.keras.layers.Dense(10, kernel_initializer=initializer),
@@ -201,13 +201,13 @@ if __name__ == "__main__":
         keras_model.set_weights(server_state)
         #keras_model.evaluate(noisy_central_emnist_test)
         accuracy = keras_model.evaluate(central_emnist_test)[1]
-        print(accuracy)
-        keras_model.save('test.h5')
-        predictions = keras_model.predict(central_emnist_test)
-        predictions_mean = tf.math.reduce_mean(predictions, axis=0)
-        tf.print(predictions_mean)
-        tf.print(tf.math.reduce_variance(predictions_mean))
-        return accuracy
+        #print(accuracy)
+        keras_model.save('fairness=0_robustness=0_privacy=0_NUMBER3.h5')
+        #predictions = keras_model.predict(central_emnist_test)
+        #predictions_mean = tf.math.reduce_mean(predictions, axis=0)
+        #tf.print(predictions_mean)
+        #tf.print(tf.math.reduce_variance(predictions_mean))
+        #return accuracy
 
     def transform_noisy1(image, label):
       image_noisy = image + tf.random.normal(shape=tf.shape(image), mean=0, stddev=0.1*args.noise_scale, dtype=tf.float32) 
@@ -300,10 +300,9 @@ if __name__ == "__main__":
     #accuracy = []
     for round in range(args.EPOCHS):
         server_state = federated_algorithm.next(server_state, federated_train_data)
-        #if round % 50 == 0:
-          #rounds.append(round + 1)
-          #accuracy.append(evaluate(server_state))
-        evaluate(server_state)
+
+    evaluate(server_state)
+
     # Create a plot
     #plt.plot(rounds, accuracy, marker='o', linestyle='-')
 

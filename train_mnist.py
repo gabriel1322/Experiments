@@ -202,7 +202,7 @@ if __name__ == "__main__":
         #keras_model.evaluate(noisy_central_emnist_test)
         accuracy = keras_model.evaluate(central_emnist_test)[1]
         #print(accuracy)
-        keras_model.save('fairness=0_robustness=0_privacy=0_NUMBER3.h5')
+        keras_model.save('fairness=1000_privacy=2_NUMBER3.h5')
         #predictions = keras_model.predict(central_emnist_test)
         #predictions_mean = tf.math.reduce_mean(predictions, axis=0)
         #tf.print(predictions_mean)
